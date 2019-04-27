@@ -2,7 +2,7 @@
   "https://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="https://www.w3.org/1999/xhtml">
 <head>
-<title>MotionChartID11ff029ca417c</title>
+<title>MotionChartID11ff04aa52e8e</title>
 <meta http-equiv="content-type" content="text/html;charset=utf-8" />
 <style type="text/css">
 body {
@@ -18,14 +18,14 @@ body {
 </head>
 <body>
  <!-- MotionChart generated in R 3.5.3 by googleVis 0.6.3 package -->
-<!-- Sat Apr 27 15:59:47 2019 -->
+<!-- Sat Apr 27 16:03:07 2019 -->
 
 
 <!-- jsHeader -->
 <script type="text/javascript">
  
 // jsData 
-function gvisDataMotionChartID11ff029ca417c () {
+function gvisDataMotionChartID11ff04aa52e8e () {
 var data = new google.visualization.DataTable();
 var datajson =
 [
@@ -40,7 +40,14 @@ var datajson =
 54.9,
 17.44642734,
 2415.501368,
-12.16842105
+12.16842105,
+1132,
+4.122791519,
+1,
+5,
+"14840",
+"guariba",
+"SP"
 ],
 [
 "53243585a1d6dc2643021fd1853d8905",
@@ -53,7 +60,14 @@ var datajson =
 170,
 31.90397561,
 9685.915217,
-17.82608696
+17.82608696,
+358,
+4.122905028,
+1,
+5,
+"42738",
+"lauro de freitas",
+"BA"
 ],
 [
 "4a3ca9315b744ce9f8e9374361493884",
@@ -66,7 +80,14 @@ var datajson =
 12.9,
 17.64823352,
 502.438396,
-4.979949875
+4.979949875,
+1822,
+3.804610318,
+1,
+5,
+"14940",
+"ibitinga",
+"SP"
 ],
 [
 "fa1c13f2614d7b5c4749cbc52fecda94",
@@ -79,7 +100,14 @@ var datajson =
 84.9,
 17.13771331,
 671.4257093,
-2.027681661
+2.027681661,
+585,
+4.326495726,
+1,
+5,
+"13170",
+"sumare",
+"SP"
 ],
 [
 "7c67e1448b00f6e969d365cea6b010ab",
@@ -92,7 +120,14 @@ var datajson =
 29.99,
 37.8391129,
 949.1105556,
-6.888888889
+6.888888889,
+988,
+3.484817814,
+1,
+5,
+"08577",
+"itaquaquecetuba",
+"SP"
 ],
 [
 "7e93a43ef30c4f03f38b393420bc753a",
@@ -105,7 +140,14 @@ var datajson =
 108.99,
 18.59464706,
 948.5584409,
-1.827956989
+1.827956989,
+336,
+4.205357143,
+1,
+5,
+"06429",
+"barueri",
+"SP"
 ],
 [
 "da8622b14eb17ae2831f4ac5b9dab84a",
@@ -118,7 +160,14 @@ var datajson =
 9.9,
 16.09010316,
 721.7863514,
-6.986486486
+6.986486486,
+1331,
+4.172802404,
+1,
+5,
+"13405",
+"piracicaba",
+"SP"
 ],
 [
 "7a67c85e85bb2ce8582c35f2203ad736",
@@ -131,7 +180,14 @@ var datajson =
 9.99,
 17.85042699,
 951.3122819,
-7.859060403
+7.859060403,
+1164,
+4.225945017,
+1,
+5,
+"03426",
+"sao paulo",
+"SP"
 ],
 [
 "1025f0e2d44d7041d6cf58b6550e0bfa",
@@ -144,7 +200,14 @@ var datajson =
 10,
 23.7339916,
 902.3931818,
-9.272727273
+9.272727273,
+922,
+3.972885033,
+1,
+5,
+"03204",
+"sao paulo",
+"SP"
 ],
 [
 "955fee9216a65b617aa5c0531780ce60",
@@ -157,7 +220,14 @@ var datajson =
 10,
 16.96529686,
 1299.727885,
-14.41346154
+14.41346154,
+1289,
+4.144297905,
+1,
+5,
+"04782",
+"sao paulo",
+"SP"
 ] 
 ];
 data.addColumn('string','seller_id');
@@ -171,13 +241,20 @@ data.addColumn('number','minPrice');
 data.addColumn('number','avgFreight');
 data.addColumn('number','avgRevProd');
 data.addColumn('number','avgItemsProd');
+data.addColumn('number','noReview');
+data.addColumn('number','avgScore');
+data.addColumn('number','minScore');
+data.addColumn('number','maxScore');
+data.addColumn('string','seller_zip_code_prefix');
+data.addColumn('string','seller_city');
+data.addColumn('string','seller_state');
 data.addRows(datajson);
 return(data);
 }
  
 // jsDrawChart
-function drawChartMotionChartID11ff029ca417c() {
-var data = gvisDataMotionChartID11ff029ca417c();
+function drawChartMotionChartID11ff04aa52e8e() {
+var data = gvisDataMotionChartID11ff04aa52e8e();
 var options = {};
 options["width"] = 800;
 options["height"] = 600;
@@ -185,7 +262,7 @@ options["state"] = "";
 
 
     var chart = new google.visualization.MotionChart(
-    document.getElementById('MotionChartID11ff029ca417c')
+    document.getElementById('MotionChartID11ff04aa52e8e')
     );
     chart.draw(data,options);
     
@@ -209,9 +286,9 @@ if (newPackage)
   pkgs.push(chartid);
   
 // Add the drawChart function to the global list of callbacks
-callbacks.push(drawChartMotionChartID11ff029ca417c);
+callbacks.push(drawChartMotionChartID11ff04aa52e8e);
 })();
-function displayChartMotionChartID11ff029ca417c() {
+function displayChartMotionChartID11ff04aa52e8e() {
   var pkgs = window.__gvisPackages = window.__gvisPackages || [];
   var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
   window.clearTimeout(window.__gvisLoad);
@@ -235,14 +312,14 @@ callbacks.shift()();
 </script>
  
 <!-- jsChart -->  
-<script type="text/javascript" src="https://www.google.com/jsapi?callback=displayChartMotionChartID11ff029ca417c"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi?callback=displayChartMotionChartID11ff04aa52e8e"></script>
  
 <!-- divChart -->
   
-<div id="MotionChartID11ff029ca417c" 
+<div id="MotionChartID11ff04aa52e8e" 
   style="width: 800; height: 600;">
 </div>
- <div><span>Data: sellerTop10 &#8226; Chart ID: <a href="Chart_MotionChartID11ff029ca417c.html">MotionChartID11ff029ca417c</a> &#8226; <a href="https://github.com/mages/googleVis">googleVis-0.6.3</a></span><br /> 
+ <div><span>Data: sellerTop10 &#8226; Chart ID: <a href="Chart_MotionChartID11ff04aa52e8e.html">MotionChartID11ff04aa52e8e</a> &#8226; <a href="https://github.com/mages/googleVis">googleVis-0.6.3</a></span><br /> 
 <!-- htmlFooter -->
 <span> 
   R version 3.5.3 (2019-03-11) 
