@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "https://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="https://www.w3.org/1999/xhtml">
+<head>
+<title>MotionChartID11ff029ca417c</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<style type="text/css">
+body {
+  color: #444444;
+  font-family: Arial,Helvetica,sans-serif;
+  font-size: 75%;
+  }
+  a {
+  color: #4D87C7;
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+ <!-- MotionChart generated in R 3.5.3 by googleVis 0.6.3 package -->
+<!-- Sat Apr 27 15:59:47 2019 -->
+
+
+<!-- jsHeader -->
+<script type="text/javascript">
+ 
+// jsData 
+function gvisDataMotionChartID11ff029ca417c () {
+var data = new google.visualization.DataTable();
+var datajson =
+[
+ [
+"4869f7a5dfa277a7dca6462dcf3b52b2",
+2018,
+1156,
+229472.63,
+95,
+198.5057353,
+899.99,
+54.9,
+17.44642734,
+2415.501368,
+12.16842105
+],
+[
+"53243585a1d6dc2643021fd1853d8905",
+2018,
+410,
+222776.05,
+23,
+543.3562195,
+1649.99,
+170,
+31.90397561,
+9685.915217,
+17.82608696
+],
+[
+"4a3ca9315b744ce9f8e9374361493884",
+2018,
+1987,
+200472.92,
+399,
+100.8922597,
+884,
+12.9,
+17.64823352,
+502.438396,
+4.979949875
+],
+[
+"fa1c13f2614d7b5c4749cbc52fecda94",
+2018,
+586,
+194042.03,
+289,
+331.129744,
+3999.9,
+84.9,
+17.13771331,
+671.4257093,
+2.027681661
+],
+[
+"7c67e1448b00f6e969d365cea6b010ab",
+2018,
+1364,
+187923.89,
+198,
+137.7741129,
+401.34,
+29.99,
+37.8391129,
+949.1105556,
+6.888888889
+],
+[
+"7e93a43ef30c4f03f38b393420bc753a",
+2018,
+340,
+176431.87,
+186,
+518.9172647,
+1800,
+108.99,
+18.59464706,
+948.5584409,
+1.827956989
+],
+[
+"da8622b14eb17ae2831f4ac5b9dab84a",
+2018,
+1551,
+160236.57,
+222,
+103.3117795,
+429.9,
+9.9,
+16.09010316,
+721.7863514,
+6.986486486
+],
+[
+"7a67c85e85bb2ce8582c35f2203ad736",
+2018,
+1171,
+141745.53,
+149,
+121.046567,
+259.99,
+9.99,
+17.85042699,
+951.3122819,
+7.859060403
+],
+[
+"1025f0e2d44d7041d6cf58b6550e0bfa",
+2018,
+1428,
+138968.55,
+154,
+97.31691176,
+510,
+10,
+23.7339916,
+902.3931818,
+9.272727273
+],
+[
+"955fee9216a65b617aa5c0531780ce60",
+2018,
+1499,
+135171.7,
+104,
+90.17458306,
+750,
+10,
+16.96529686,
+1299.727885,
+14.41346154
+] 
+];
+data.addColumn('string','seller_id');
+data.addColumn('number','dummy');
+data.addColumn('number','ItemsSold');
+data.addColumn('number','Rev');
+data.addColumn('number','noProd');
+data.addColumn('number','avgPrice');
+data.addColumn('number','maxPrice');
+data.addColumn('number','minPrice');
+data.addColumn('number','avgFreight');
+data.addColumn('number','avgRevProd');
+data.addColumn('number','avgItemsProd');
+data.addRows(datajson);
+return(data);
+}
+ 
+// jsDrawChart
+function drawChartMotionChartID11ff029ca417c() {
+var data = gvisDataMotionChartID11ff029ca417c();
+var options = {};
+options["width"] = 800;
+options["height"] = 600;
+options["state"] = "";
+
+
+    var chart = new google.visualization.MotionChart(
+    document.getElementById('MotionChartID11ff029ca417c')
+    );
+    chart.draw(data,options);
+    
+
+}
+  
+ 
+// jsDisplayChart
+(function() {
+var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+var chartid = "motionchart";
+  
+// Manually see if chartid is in pkgs (not all browsers support Array.indexOf)
+var i, newPackage = true;
+for (i = 0; newPackage && i < pkgs.length; i++) {
+if (pkgs[i] === chartid)
+newPackage = false;
+}
+if (newPackage)
+  pkgs.push(chartid);
+  
+// Add the drawChart function to the global list of callbacks
+callbacks.push(drawChartMotionChartID11ff029ca417c);
+})();
+function displayChartMotionChartID11ff029ca417c() {
+  var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+  var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+  window.clearTimeout(window.__gvisLoad);
+  // The timeout is set to 100 because otherwise the container div we are
+  // targeting might not be part of the document yet
+  window.__gvisLoad = setTimeout(function() {
+  var pkgCount = pkgs.length;
+  google.load("visualization", "1", { packages:pkgs, callback: function() {
+  if (pkgCount != pkgs.length) {
+  // Race condition where another setTimeout call snuck in after us; if
+  // that call added a package, we must not shift its callback
+  return;
+}
+while (callbacks.length > 0)
+callbacks.shift()();
+} });
+}, 100);
+}
+ 
+// jsFooter
+</script>
+ 
+<!-- jsChart -->  
+<script type="text/javascript" src="https://www.google.com/jsapi?callback=displayChartMotionChartID11ff029ca417c"></script>
+ 
+<!-- divChart -->
+  
+<div id="MotionChartID11ff029ca417c" 
+  style="width: 800; height: 600;">
+</div>
+ <div><span>Data: sellerTop10 &#8226; Chart ID: <a href="Chart_MotionChartID11ff029ca417c.html">MotionChartID11ff029ca417c</a> &#8226; <a href="https://github.com/mages/googleVis">googleVis-0.6.3</a></span><br /> 
+<!-- htmlFooter -->
+<span> 
+  R version 3.5.3 (2019-03-11) 
+  &#8226; <a href="https://developers.google.com/terms/">Google Terms of Use</a> &#8226; <a href="https://google-developers.appspot.com/chart/interactive/docs/gallery/motionchart">Documentation and Data Policy</a>
+</span></div>
+</body>
+</html>
