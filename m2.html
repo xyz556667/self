@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "https://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="https://www.w3.org/1999/xhtml">
+<head>
+<title>MotionChartID305c74a398a</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<style type="text/css">
+body {
+  color: #444444;
+  font-family: Arial,Helvetica,sans-serif;
+  font-size: 75%;
+  }
+  a {
+  color: #4D87C7;
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+ <!-- MotionChart generated in R 3.5.3 by googleVis 0.6.3 package -->
+<!-- Sun Jun 16 14:24:04 2019 -->
+
+
+<!-- jsHeader -->
+<script type="text/javascript">
+ 
+// jsData 
+function gvisDataMotionChartID305c74a398a () {
+var data = new google.visualization.DataTable();
+var datajson =
+[
+ [
+"N1",
+2000,
+1.384662956,
+11.60151221,
+2367.217304,
+11.86209029,
+14.32096475,
+2893.784787,
+1617
+],
+[
+"N2",
+2000,
+1.112931335,
+12.83099802,
+568.1613977,
+12.96340188,
+13.75322412,
+607.3928198,
+2869
+],
+[
+"S",
+2000,
+1.505366637,
+56.24517525,
+1011.618504,
+64.15658541,
+70.18707995,
+1440.374661,
+9969
+],
+[
+"M1",
+2000,
+11.24068269,
+8.339746245,
+713.6245714,
+8.390107976,
+78.92406827,
+7667.893069,
+2871
+],
+[
+"M2",
+2000,
+2.909438776,
+26.23211755,
+2389.781707,
+16.72151361,
+67.68664966,
+6747.479592,
+2352
+],
+[
+"M3",
+2000,
+3.227150236,
+24.22716842,
+642.8666774,
+17.8344936,
+67.72310802,
+2112.932742,
+8906
+] 
+];
+data.addColumn('string','status');
+data.addColumn('number','dummy');
+data.addColumn('number','average_frequency');
+data.addColumn('number','average_cycle');
+data.addColumn('number','average_amount');
+data.addColumn('number','average_recency');
+data.addColumn('number','average_seniority');
+data.addColumn('number','average_rev');
+data.addColumn('number','group_size');
+data.addRows(datajson);
+return(data);
+}
+ 
+// jsDrawChart
+function drawChartMotionChartID305c74a398a() {
+var data = gvisDataMotionChartID305c74a398a();
+var options = {};
+options["width"] = 1280;
+options["height"] = 720;
+options["state"] = "";
+
+
+    var chart = new google.visualization.MotionChart(
+    document.getElementById('MotionChartID305c74a398a')
+    );
+    chart.draw(data,options);
+    
+
+}
+  
+ 
+// jsDisplayChart
+(function() {
+var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+var chartid = "motionchart";
+  
+// Manually see if chartid is in pkgs (not all browsers support Array.indexOf)
+var i, newPackage = true;
+for (i = 0; newPackage && i < pkgs.length; i++) {
+if (pkgs[i] === chartid)
+newPackage = false;
+}
+if (newPackage)
+  pkgs.push(chartid);
+  
+// Add the drawChart function to the global list of callbacks
+callbacks.push(drawChartMotionChartID305c74a398a);
+})();
+function displayChartMotionChartID305c74a398a() {
+  var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+  var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+  window.clearTimeout(window.__gvisLoad);
+  // The timeout is set to 100 because otherwise the container div we are
+  // targeting might not be part of the document yet
+  window.__gvisLoad = setTimeout(function() {
+  var pkgCount = pkgs.length;
+  google.load("visualization", "1", { packages:pkgs, callback: function() {
+  if (pkgCount != pkgs.length) {
+  // Race condition where another setTimeout call snuck in after us; if
+  // that call added a package, we must not shift its callback
+  return;
+}
+while (callbacks.length > 0)
+callbacks.shift()();
+} });
+}, 100);
+}
+ 
+// jsFooter
+</script>
+ 
+<!-- jsChart -->  
+<script type="text/javascript" src="https://www.google.com/jsapi?callback=displayChartMotionChartID305c74a398a"></script>
+ 
+<!-- divChart -->
+  
+<div id="MotionChartID305c74a398a" 
+  style="width: 1280; height: 720;">
+</div>
+ <div><span>Data: CustSegments &#8226; Chart ID: <a href="Chart_MotionChartID305c74a398a.html">MotionChartID305c74a398a</a> &#8226; <a href="https://github.com/mages/googleVis">googleVis-0.6.3</a></span><br /> 
+<!-- htmlFooter -->
+<span> 
+  R version 3.5.3 (2019-03-11) 
+  &#8226; <a href="https://developers.google.com/terms/">Google Terms of Use</a> &#8226; <a href="https://google-developers.appspot.com/chart/interactive/docs/gallery/motionchart">Documentation and Data Policy</a>
+</span></div>
+</body>
+</html>
