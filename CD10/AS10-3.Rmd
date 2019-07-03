@@ -1,0 +1,274 @@
+---
+title: "AS10-3：SPAM or HAM"
+author: "卓雍然 D994010001"
+date: "`r Sys.time()`"
+output: 
+  html_document:
+    highlight: pygments
+    theme: flatly
+    css: style.css
+---
+
+<br><hr>
+
+```{r}
+packages = c(
+  "dplyr","ggplot2","caTools","tm","SnowballC","ROCR","rpart",
+  "rpart.plot","randomForest")
+existing = as.character(installed.packages()[,1])
+for(pkg in packages[!(packages %in% existing)]) install.packages(pkg)
+```
+
+```{r warning=F, message=F, cache=F, error=F}
+rm(list=ls(all=TRUE))
+Sys.setlocale("LC_ALL","C")
+options(digits=5, scipen=10)
+
+library(dplyr)
+library(tm)
+library(SnowballC)
+library(ROCR)
+library(caTools)
+library(rpart)
+library(rpart.plot)
+library(randomForest)
+```
+<br>
+
+### Problem 1 - Exploration
+```{r}
+D = read.csv("data/emails.csv", stringsAsFactors = F)
+```
+
+##### 1.1 How many emails are in the dataset?
+```{r}
+nrow(D)
+```
+
+##### 1.2 How many of the emails are spam?
+```{r}
+table(D$spam)
+```
+
+##### 1.3 Which word appears at the beginning of every email in the dataset?
+```{r}
+substr(D$text[1:5], 1, 60)
+```
+
+##### 1.4 Words in every document
+【P1.4】_Could a spam classifier potentially benefit from including the frequency of the word that appears in every email?_
+
++ Yes -- the number of times the word appears might help us differentiate spam from ham
++
+
+##### 1.5 How many characters are in the longest email?
+```{r}
+nchar(D$text) %>% max
+```
+
+##### 1.6 Which row contains the shortest email in the dataset?
+```{r}
+nchar(D$text) %>% which.min
+```
+<br><hr>
+
+### Problem 2 - Preparing the Corpus
+
+##### 2.1 Corpus and DTM
+```{r}
+corp = Corpus(VectorSource(D$text))
+corp = tm_map(corp,  content_transformer(tolower))
+corp = tm_map(corp, removePunctuation)
+corp = tm_map(corp, removeWords, stopwords("english"))
+corp = tm_map(corp, stemDocument)
+dtm = DocumentTermMatrix(corp)
+```
+【P2.1】_How many terms are in dtm?_ 
+```{r}
+dtm
+```
+
+##### 2.2 Remove less frequent words
+Limit `dtm` to contain terms appearing in at least 5% 
+```{r}
+spdtm = removeSparseTerms(dtm, 0.95)
+```
+
+【P2.2】_How many terms are in `spdtm`?_ 
+```{r}
+spdtm 
+```
+
+##### 2.3 Build data frame
+Build a data frame `ems` from `spdtm`
+```{r}
+ems = as.data.frame(as.matrix(spdtm))
+```
+
+【P2.3】_What is the most frequent word in `spdtm`?_ 
+```{r}
+colSums(ems) %>% sort %>% tail
+```
+
+##### 2.4 Most frequent words in HAM emalis
+Incorporate target variable `spam`
+```{r}
+ems$spam = D$spam
+```
+
+【P2.4】_How many word stems appear at least 5000 times in the ham emails in the dataset?_
+```{r}
+subset(ems, spam==0) %>% colSums %>% sort %>% tail(10)
+```
+
+##### 2.5 Most frequent words in SPAM emalis
+【P2.5】_How many word stems appear at least 1000 times in the spam emails in the dataset?_
+```{r}
+subset(ems, spam==1) %>% colSums %>% {.[. > 1000]}
+```
+
+##### 2.6 Observation 1
+【P2.6】_The lists of most common words are significantly different between the spam and ham emails. What does this likely imply?_
+
++ The frequencies of these most common words are likely to help differentiate between spam and ham
++
+
+##### 2.7 Observation 2
+【P2.7】_Several of the most common word stems from the ham documents, such as "enron", "hou" (short for Houston), "vinc" (the word stem of "Vince") and "kaminski", are likely specific to Vincent Kaminski's inbox. What does this mean about the applicability of the text analytics models we will train for the spam filtering problem?_
+
++ The models we build are personalized, and would need to be further tested before being used as a spam filter for another person
++
+
+<br><hr>
+
+### Problem 3 - Building machine learning models
+
+Split the data and build GLM, CART and random forest models ...
+```{r}
+ems$spam = factor(ems$spam)
+names(ems) = make.names(names(ems))
+
+set.seed(123); spl = sample.split(ems$spam, 0.7)
+train = subset(ems, spl == TRUE)
+test = subset(ems, spl == FALSE)
+table(test$spam) %>% prop.table  # 0.76135
+
+m.glm = glm(spam ~ ., train, family = 'binomial') 
+m.cart = rpart(spam ~ ., train, method="class")
+set.seed(123); m.rf = randomForest(spam ~ ., train)
+```
+
+##### 3.1 Prediction of Logistic Model
+```{r}
+p.glm = predict(m.glm,type='response') 
+```
+
+【P3.1a】 _How many of the training set predicted probabilities from spamLog are less than 0.00001?_
+```{r}
+sum(p.glm < 0.00001)
+```
+
+【P3.1b】 _How many of the training set predicted probabilities from spamLog are more than 0.99999?_
+```{r}
+sum(p.glm > 0.99999)
+```
+
+【P3.1c】 _How many of the training set predicted probabilities from spamLog are between 0.00001 and 0.99999?_
+```{r}
+sum(p.glm >= 0.00001 & p.glm <= 0.99999)
+```
+
+##### 3.2 Significant predictors in the GLM model
+【P3.2】_How many variables are labeled as significant (at the p=0.05 level) in the logistic regression summary output?_
+```{r}
+summary(m.glm)
+```
+
+```{r}
+sum( summary(m.glm)$coef[,4]  < 0.05 )
+```
+
+##### 3.3 Words in the Decision Tree 
+【P3.3】_How many of the word stems "enron", "hou", "vinc", and "kaminski" appear in the CART tree?_
+```{r}
+prp(m.cart)
+```
+Recall that we suspect these word stems are specific to Vincent Kaminski and might affect the generalizability of a spam filter built with his ham data.
+
+
+##### 3.4 What is the training accuracy of the GLM model?
+```{r}
+table(train$spam, p.glm > 0.5) %>% {sum(diag(.)) / sum(.)}
+```
+
+##### 3.5 What is the training AUC of the GLM model?
+```{r}
+colAUC(p.glm, train$spam)
+```
+
+##### 3.6 What is the training accuracy of the CART model?
+```{r}
+p.cart = predict(m.cart)[,2]
+table(train$spam, p.cart > 0.5) %>% {sum(diag(.)) / sum(.)}
+```
+
+##### 3.7 What is the training accuracy of the CART model?
+```{r}
+colAUC(p.cart, train$spam)
+```
+
+##### 3.8 What is the training accuracy of the RF model?
+```{r}
+p.rf = predict(m.rf,type='prob')[,2]
+table(train$spam, p.rf > 0.5) %>% {sum(diag(.)) / sum(.)}
+```
+
+##### 3.9 What is the training accuracy of the RF model?
+```{r}
+colAUC(p.rf, train$spam)
+```
+
+##### 3.10 Which model had the best training set performance, in terms of accuracy & AUC?
+```{r}
+pred = data.frame(glm=p.glm, cart=p.cart, rf=p.rf)
+rbind(
+  ACC= apply(pred, 2, function(x) {
+    table(train$spam, x > 0.5) %>% {sum(diag(.)) / sum(.)} } ),
+  colAUC(pred, train$spam)
+  ) %>% t 
+```
+<br><hr>
+
+### Problem 4 - Evaluating on the Test Set
+
+Obtain predicted probabilities for the testing set for each of the models, 
+```{r}
+pred2 = data.frame(
+  glm = predict(m.glm, test, type='response'),
+  cart = predict(m.cart, test)[,2],
+  rf = predict(m.rf, test, type='prob')[,2] )
+rbind(
+  ACC = apply(pred2, 2, function(x) {
+    table(test$spam, x > 0.5) %>% {sum(diag(.)) / sum(.)} } ),
+  AUC = colAUC(pred2, test$spam)  ) %>% t
+```
+
+##### 4.1 ~ 4.6 ACC/AUC of the GLM/CART/RF models
+see the table above
+
+##### 4.7 Which model had the best testing set performance, in terms of accuracy and AUC?
+
++ Random Forest
++
+
+##### 4.7 Which model demonstrated the greatest degree of overfitting??
+
++ Logistic Regression
++ 
+
+<br><hr><br><br><br><br>
+
+
+
+
+

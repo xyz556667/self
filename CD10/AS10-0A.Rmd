@@ -1,0 +1,208 @@
+---
+title: "AS10-0A：Twitter 情緒分析"
+author: "卓雍然 D994010001"
+date: "`r Sys.time()`"
+output: 
+  html_document:
+    highlight: pygments
+    theme: flatly
+    css: style.css
+---
+
+<br>
+
+```{r}
+packages = c(
+  "dplyr","ggplot2","caTools","tm","SnowballC","ROCR","rpart","rpart.plot","randomForest")
+existing = as.character(installed.packages()[,1])
+for(pkg in packages[!(packages %in% existing)]) install.packages(pkg)
+```
+
+```{r warning=F, message=F, cache=F, error=F}
+rm(list=ls(all=TRUE))
+# Sys.setlocale("LC_ALL","C")
+options(digits=5, scipen=10)
+
+library(dplyr)
+library(tm)
+library(SnowballC)
+library(ROCR)
+library(caTools)
+library(rpart)
+library(rpart.plot)
+library(randomForest)
+```
+<br><hr>
+
+```{r}
+# Read in the data
+tweets = read.csv("data/tweets.csv", stringsAsFactors=FALSE)
+```
+
+##### 調整目標變數
+因為情緒標的記值偏高，先調整目標變數的編碼，讓`1`和`0`之間比較平衡：
+```{r}
+tweets$Negative = as.factor(tweets$Avg <= -1)
+prop.table(table(tweets$Negative))
+```
+
+### 文集整理
+
+##### 建立文集 (Coupus)
+```{r}
+# create corpus from vector
+corpus = Corpus(VectorSource(tweets$Tweet))
+corpus[[1]]$content    # content of the first document
+```
+
+##### 轉為小寫
+```{r}
+corpus = tm_map(corpus, content_transformer(tolower))
+corpus[[1]]$content    # content of the first document
+```
+
+##### 移除標點
+```{r}
+# some version of tm may have to do the commmad below
+# corpus = tm_map(corpus, PlainTextDocument)
+corpus = tm_map(corpus, removePunctuation)
+corpus[[1]]$content
+```
+
+##### 去除贅字
+```{r}
+stopwords("english")[1:10]
+corpus = tm_map(corpus, removeWords, c("apple", stopwords("english")))
+corpus[[1]]$content
+```
+
+##### 字根還原
+```{r}
+corpus = tm_map(corpus, stemDocument)
+corpus[[1]]$content
+```
+<br><hr>
+
+### 文件字詞矩陣 (字頻表，DTM)
+
+##### 建立文件字詞矩陣 (Document Term Matrix)
+```{r}
+frequencies = DocumentTermMatrix(corpus)
+frequencies
+```
+
+```{r}
+# Look at matrix 
+inspect(frequencies[1000:1005,505:515])
+findFreqTerms(frequencies, lowfreq=20)
+```
+
+##### 移除頻率太低的字詞
+```{r}
+sparse = removeSparseTerms(frequencies, 0.995)
+sparse
+```
+<br><hr>
+
+### 模型與預測
+
+##### 轉成資料框
+```{r}
+# Convert to a data frame
+tweetsSparse = as.data.frame(as.matrix(sparse))
+# Make all variable names R-friendly
+colnames(tweetsSparse) = make.names(colnames(tweetsSparse))
+# Add target variable
+tweetsSparse$Negative = tweets$Negative
+```
+
+##### 資料分割
+```{r}
+library(caTools)
+set.seed(123)
+split = sample.split(tweetsSparse$Negative, SplitRatio = 0.7)
+trainSparse = subset(tweetsSparse, split==TRUE)
+testSparse = subset(tweetsSparse, split==FALSE)
+```
+
+```{r}
+# quiz: find the words whose frequency is greater or equal than 100
+findFreqTerms(frequencies, lowfreq=100)
+```
+<br><hr>
+
+### 分類決策樹模型
+```{r}
+library(rpart)
+library(rpart.plot)
+tweetCART = rpart(Negative ~ ., data=trainSparse, method="class")
+prp(tweetCART)
+```
+
+##### 驗證模型的準確性
+```{r}
+# Evaluate the performance of the model
+predictCART = predict(tweetCART, newdata=testSparse, type="class")
+table(testSparse$Negative, predictCART)
+(294+18)/(294+6+37+18)  # ACC = 0.87887
+```
+
+##### 與底線準確性相比較
+```{r}
+# Baseline accuracy 
+table(testSparse$Negative)
+300/(300+55)            # ACC = 0.84507
+```
+<br><hr>
+
+### 隨機森林模型
+```{r}
+library(randomForest)
+set.seed(123)
+tweetRF = randomForest(Negative ~ ., data=trainSparse)
+```
+
+```{r}
+# Make predictions:
+predictRF = predict(tweetRF, newdata=testSparse)
+table(testSparse$Negative, predictRF)  %>% {sum(diag(.)) / sum(.)}
+# (293+21)/(293+7+34+23) # ACC = 0.87955
+```
+<br><hr>
+
+### 一般線性模型
+```{r}
+## quiz: glm model
+glm1 = glm(Negative ~ ., data=trainSparse, family = 'binomial')
+pred = predict(glm1, testSparse, type='response')
+table(testSparse$Negative, pred > 0.5) %>% {sum(diag(.)) / sum(.)}
+# Test ACC = 0.80845
+```
+
+```{r}
+pred2 = predict(glm1, type='response')
+table(trainSparse$Negative, pred2 > 0.5) %>% {sum(diag(.)) / sum(.)}
+# Train ACC = 0.94915
+```
+<br><hr>
+
+<p class="qiz">
+討論議題：<br>
+&emsp; ■ 文字分析的流程 <br>
+&emsp; &emsp; ● 從文件向量建立文集 <br>
+&emsp; &emsp; ● 文集整理 (字碼、小寫、標點、贅字、字根) <br>
+&emsp; &emsp; ● 文件字詞矩陣 <br>
+&emsp; &emsp; ● 資料框 <br>
+&emsp; &emsp; ● 建立模型、進行預測 <br>
+<br>
+&emsp; ■ 比較一下三種模型的準確性，你可以觀察到哪一些現象？ <br>
+&emsp; &emsp; ● <br>
+&emsp; &emsp; ● <br>
+</p>
+
+<br><br><br><br>
+
+
+
+
+

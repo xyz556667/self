@@ -1,0 +1,162 @@
+---
+title: "AS10-0B：文字分析的法務應用"
+author: "卓雍然 D994010001"
+date: "`r Sys.time()`"
+output: 
+  html_document:
+    highlight: pygments
+    theme: flatly
+    css: style.css
+---
+
+<br>
+
+```{r}
+packages = c(
+  "dplyr","ggplot2","caTools","tm","SnowballC","ROCR","rpart","rpart.plot","randomForest")
+existing = as.character(installed.packages()[,1])
+for(pkg in packages[!(packages %in% existing)]) install.packages(pkg)
+```
+
+```{r warning=F, message=F, cache=F, error=F}
+rm(list=ls(all=TRUE))
+Sys.setlocale("LC_ALL","C")
+options(digits=5, scipen=10)
+
+library(dplyr)
+library(tm)
+library(SnowballC)
+library(ROCR)
+library(caTools)
+library(rpart)
+library(rpart.plot)
+library(randomForest)
+```
+<br><hr>
+
+
+```{r}
+emails = read.csv("data/energy_bids.csv", stringsAsFactors=FALSE)
+```
+
+##### Look at emails
+```{r}
+emails$email[1]
+emails$responsive[1]
+emails$email[2]
+emails$responsive[2]
+```
+
+##### Ratio of Responsive emails
+```{r}
+mean(emails$responsive)
+```
+
+##### Create and Prepare Corpus
+```{r}
+library(tm)
+txt <- iconv(enc2utf8(emails$email),sub="byte")
+corpus = Corpus(VectorSource(txt))
+corpus = tm_map(corpus, content_transformer(tolower))
+corpus = tm_map(corpus, removePunctuation)
+corpus = tm_map(corpus, removeWords, stopwords("english"))
+corpus = tm_map(corpus, stemDocument)
+corpus[[1]]$content
+```
+
+##### Document Term Matrix
+```{r}
+# create dtm
+dtm = DocumentTermMatrix(corpus); dtm
+```
+
+```{r}
+# Remove sparse terms
+dtm = removeSparseTerms(dtm, 0.97); dtm
+```
+
+##### Prepare Data Frame 
+```{r}
+# Create data frame
+labeledTerms = as.data.frame(as.matrix(dtm))
+
+# Add in the outcome variable
+labeledTerms$responsive = emails$responsive
+```
+
+##### Prepare Train & Test Data
+```{r}
+library(caTools)
+set.seed(144)
+spl = sample.split(labeledTerms$responsive, 0.7)
+train = subset(labeledTerms, spl == TRUE)
+test = subset(labeledTerms, spl == FALSE)
+```
+
+### CART Model
+
+##### Modeling
+```{r}
+# Build a CART model
+library(rpart)
+library(rpart.plot)
+emailCART = rpart(responsive~., data=train, method="class")
+prp(emailCART)
+```
+
+##### Predicting
+```{r}
+# Make predictions on the test set
+pred = predict(emailCART, newdata=test)
+pred[1:10,]
+pred.prob = pred[,2]
+```
+
+##### Validating Accuracy
+```{r}
+# Compute accuracy
+table(test$responsive, pred.prob >= 0.5) %>% {sum(diag(.))/sum(.)}
+```
+
+```{r}
+# Baseline model accuracy
+1- mean(test$responsive)
+```
+
+##### ROC
+```{r fig.height=4, fig.width=4}
+# ROC curve
+library(ROCR)
+predROCR = prediction(pred.prob, test$responsive)
+perfROCR = performance(predROCR, "tpr", "fpr")
+par(mar=c(6,5,3,3),cex=0.8)
+plot(perfROCR, colorize=TRUE)
+```
+
+##### AUC
+```{r}
+performance(predROCR, "auc")@y.values   # AUC = 0.7964
+colAUC(pred[,2], test$responsive)
+```
+<br><hr>
+
+<p class="qiz">
+討論議題：<br>
+&emsp; ■ 在這個應用裡面你認為TFP和FPR哪樣比較重要呢？ <br>
+&emsp; &emsp; ● 為甚麼？ <br>
+&emsp; &emsp; ● 什麼因素會決定TFP和FPR的相對重要性？ <br>
+&emsp; &emsp; ● 有什麼方法可以量化TFP和FPR的相對重要性？ <br>
+&emsp; &emsp; ● <br>
+<br>
+&emsp; ■ 根據這條ROC曲線你會如何決定你的臨界機率呢？ <br>
+&emsp; &emsp; ● 你為什麼會做這個決定？ <br>
+&emsp; &emsp; ● <br>
+<br>
+</p>
+
+<br><br><br><br>
+
+
+
+
+
